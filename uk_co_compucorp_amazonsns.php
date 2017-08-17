@@ -5,9 +5,11 @@ class uk_co_compucorp_amazonsns extends CRM_SMS_Provider {
 
   static private $_singleton;
 
-  public $_apiURL;
+  public $_apiURL = 'https://aws.amazon.com';
   private $snsClient;
   private $senderID;
+
+  const MAX_SMS_CHAR = 160;
 
   public function __construct($providerParameters) {
     if ($this->validateProviderParameters($providerParameters)) {
@@ -61,6 +63,14 @@ class uk_co_compucorp_amazonsns extends CRM_SMS_Provider {
 
   public function send($recipients, $header, $message, $jobID = NULL, $userID = NULL) {
 
+    if (!$this->validatePhoneNumber($recipients)) {
+      return PEAR::raiseError(
+        'The phone number ' . $recipients . ' does not comply with the E.164 format! SMS sending not possible. <a href="http://docs.aws.amazon.com/sns/latest/dg/sms_publish-to-phone.html" target="_blank">More information...</a>',
+        0,
+        PEAR_ERROR_RETURN
+      );
+    }
+
     $messageParams = array();
 
     if (!empty($this->senderID)) {
@@ -84,5 +94,13 @@ class uk_co_compucorp_amazonsns extends CRM_SMS_Provider {
     }
 
     return $messageID;
+  }
+
+  function validatePhoneNumber($phone) {
+    if (preg_match('/^\+[1-9]\d{1,14}$/', $phone)) {
+      return true;
+    }
+
+    return false;
   }
 }

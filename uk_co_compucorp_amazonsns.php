@@ -77,7 +77,7 @@ class uk_co_compucorp_amazonsns extends CRM_SMS_Provider {
       $messageParams['SenderID'] = $this->senderID;
     }
 
-    $messageParams['SMSType'] = 'Transactional';
+    $messageParams['SMSType'] = CRM_Utils_Request::retrieve('sms_type', 'String') ?: 'Promotional';
     $messageParams['Message'] = $message;
     $messageParams['PhoneNumber'] = $recipients;
 

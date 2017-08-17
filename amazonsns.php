@@ -125,6 +125,20 @@ function amazonsns_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _amazonsns_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
+function amazonsns_civicrm_buildForm($formName, &$form) {
+  if ($formName == 'CRM_Contact_Form_Task_SMS') {
+
+    $amazonSMSTypes = array('Promotional' => ts('Promotional'), 'Transactional' => ts('Transactional'));
+    $form->add('select', 'sms_type', ts('SMS Type'), $amazonSMSTypes, TRUE);
+
+    $templatePath = realpath(dirname(__FILE__)."/templates");
+    CRM_Core_Region::instance('page-body')->add(array(
+      'template' => "{$templatePath}/CRM/Amazonsns/SMSTypeField.tpl"
+    ));
+
+  }
+}
+
 // --- Functions below this ship commented out. Uncomment as required. ---
 
 /**

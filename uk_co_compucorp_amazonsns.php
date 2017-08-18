@@ -186,7 +186,7 @@ class uk_co_compucorp_amazonsns extends CRM_SMS_Provider {
    * @return bool
    *   True if valid, false otherwise.
    */
-  function validatePhoneNumber($phone) {
+  private function validatePhoneNumber($phone) {
     return CRM_Amazonsns_SMS_PhoneValidator::validatePhoneNumber($phone);
   }
 }

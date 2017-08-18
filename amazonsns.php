@@ -126,43 +126,38 @@ function amazonsns_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 }
 
 function amazonsns_civicrm_buildForm($formName, &$form) {
-  if ($formName == 'CRM_Contact_Form_Task_SMS') {
+  if ($formName == 'CRM_Contact_Form_Task_SMS' || $formName == 'CRM_SMS_Form_Upload') {
 
     $amazonSMSTypes = array('Promotional' => ts('Promotional'), 'Transactional' => ts('Transactional'));
     $form->add('select', 'sms_type', ts('SMS Type'), $amazonSMSTypes, TRUE);
 
     $templatePath = realpath(dirname(__FILE__)."/templates");
-    CRM_Core_Region::instance('page-body')->add(array(
-      'template' => "{$templatePath}/CRM/Amazonsns/SMSTypeField.tpl"
-    ));
+    $template = ($formName == 'CRM_Contact_Form_Task_SMS' ? 'SMSTypeField.tpl' : 'BatchSMSTypeField.tpl');
 
+    CRM_Core_Region::instance('page-body')->add(array(
+      'template' => "{$templatePath}/CRM/Amazonsns/$template"
+    ));
+  }
+
+  if ($formName == 'CRM_SMS_Form_Upload') {
+    $invalidPhonesCount = CRM_Amazonsns_SMS_PhoneValidator::countMailingInvalidPhones($form->_mailingID);
+
+    if ($invalidPhonesCount > 0) {
+      $invalidPhones = CRM_Amazonsns_SMS_PhoneValidator::getMailingInvalidPhonesSample($form->_mailingID);
+
+      $form->assign('invalidPhonesCount', $invalidPhonesCount);
+      $form->assign('invalidPhones', $invalidPhones);
+    }
   }
 }
 
-// --- Functions below this ship commented out. Uncomment as required. ---
+function amazonsns_civicrm_postProcess($formName, &$form) {
+  if ($formName == 'CRM_SMS_Form_Upload') {
+    $smsType = CRM_Utils_Request::retrieve('sms_type', 'String') ?: 'Promotional';
 
-/**
- * Implements hook_civicrm_preProcess().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
- *
-function amazonsns_civicrm_preProcess($formName, &$form) {
-
-} // */
-
-/**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
- *
-function amazonsns_civicrm_navigationMenu(&$menu) {
-  _amazonsns_civix_insert_navigation_menu($menu, NULL, array(
-    'label' => ts('The Page', array('domain' => 'uk.compucorp.civicrm.amazonsns')),
-    'name' => 'the_page',
-    'url' => 'civicrm/the-page',
-    'permission' => 'access CiviReport,access CiviContribute',
-    'operator' => 'OR',
-    'separator' => 0,
-  ));
-  _amazonsns_civix_navigationMenu($menu);
-} // */
+    civicrm_api3('Mailing', 'create', array(
+      'id' => $form->_mailingID,
+      'template_options' => array('sms_type' => $smsType),
+    ));
+  }
+}

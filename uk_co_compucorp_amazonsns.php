@@ -46,7 +46,7 @@ class uk_co_compucorp_amazonsns extends CRM_SMS_Provider {
     return $valid;
   }
 
-  public static function singleton($providerParams, $force) {
+  public static function &singleton($providerParams = array(), $force = FALSE) {
     if (!isset(self::$_singleton) || $force) {
       $provider = array();
 
@@ -77,7 +77,17 @@ class uk_co_compucorp_amazonsns extends CRM_SMS_Provider {
       $messageParams['SenderID'] = $this->senderID;
     }
 
-    $messageParams['SMSType'] = CRM_Utils_Request::retrieve('sms_type', 'String') ?: 'Promotional';
+    if (!empty($jobID)) {
+      $mailingData = civicrm_api3('Mailing', 'getvalue', array(
+        'sequential' => 1,
+        'return' => 'template_options',
+        'id' => $jobID,
+      ));
+      $messageParams['SMSType'] = $mailingData['sms_type'] ?: 'Promotional';
+    } else {
+      $messageParams['SMSType'] = CRM_Utils_Request::retrieve('sms_type', 'String') ?: 'Promotional';
+    }
+
     $messageParams['Message'] = $message;
     $messageParams['PhoneNumber'] = $recipients;
 
@@ -97,10 +107,6 @@ class uk_co_compucorp_amazonsns extends CRM_SMS_Provider {
   }
 
   function validatePhoneNumber($phone) {
-    if (preg_match('/^\+[1-9]\d{1,14}$/', $phone)) {
-      return true;
-    }
-
-    return false;
+    return CRM_Amazonsns_SMS_PhoneValidator::validatePhoneNumber($phone);
   }
 }

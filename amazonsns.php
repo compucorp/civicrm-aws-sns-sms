@@ -125,7 +125,17 @@ function amazonsns_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _amazonsns_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
+/**
+ * Implements hook_civicrm_buildForm, to add SMS Type field required by Amazon
+ * SNS, and to check if phone numbers being used on a batch SMS sending job are
+ * valid E.164 numbers.
+ *
+ * @param string $formName
+ * @param object $form
+ */
 function amazonsns_civicrm_buildForm($formName, &$form) {
+
+  // Add SMS Type Field
   if ($formName == 'CRM_Contact_Form_Task_SMS' || $formName == 'CRM_SMS_Form_Upload') {
 
     $amazonSMSTypes = array('Promotional' => ts('Promotional'), 'Transactional' => ts('Transactional'));
@@ -139,6 +149,7 @@ function amazonsns_civicrm_buildForm($formName, &$form) {
     ));
   }
 
+  // Find Invalid Phones on Batch SMS Sending
   if ($formName == 'CRM_SMS_Form_Upload') {
     $invalidPhonesCount = CRM_Amazonsns_SMS_PhoneValidator::countMailingInvalidPhones($form->_mailingID);
 
@@ -151,6 +162,14 @@ function amazonsns_civicrm_buildForm($formName, &$form) {
   }
 }
 
+/**
+ * Implements hook_civicrm_postProcess, to store SMS Type field selected for a
+ * batch SMS mailing job as a template option, so it may be available when the
+ * actual SMS sending operation is executed.
+ *
+ * @param string $formName
+ * @param object $form
+ */
 function amazonsns_civicrm_postProcess($formName, &$form) {
   if ($formName == 'CRM_SMS_Form_Upload') {
     $smsType = CRM_Utils_Request::retrieve('sms_type', 'String') ?: 'Promotional';

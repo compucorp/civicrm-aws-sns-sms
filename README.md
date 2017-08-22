@@ -32,10 +32,16 @@ procedure:
 - For password, use the 'Secret Access Key' provided by amazon for your IAM user.
 - Select API Type as http
 - For API URL, leave the one preloaded when yo selected 'Amazon SNS' on the Name field. This value is moot, as the AWS SDK determines the URL on-the-fly.
-- For API Parameters field, you must provide the following values:
+- For API Parameters field, there are three parameters you must provide. Be sure to put each parameter on a
+ different line, with the format 'parameter_name=parameter_value':
   - region: The AWS region from where the SMS message should be sent.
   - version: AWS SDK version to use. Use 'latest' for this value.
   - SenderID: An alphanumeric string with at least one letter which identifies the sender. Bear in mind that not all countries support showing SenderID.
+```
+region=eu-west-1
+version=latest
+SenderID=TestSender
+```
 - Click Save!
 
 Usage

@@ -61,8 +61,8 @@ class uk_co_compucorp_amazonsns extends CRM_SMS_Provider {
       $this->snsClient = new SNSClient($params);
     }
 
-    if (!empty($providerParameters['SenderID'])) {
-      $this->senderID = $providerParameters['SenderID'];
+    if (!empty($providerParameters['api_params']['SenderID'])) {
+      $this->senderID = $providerParameters['api_params']['SenderID'];
     }
   }
 
@@ -150,12 +150,14 @@ class uk_co_compucorp_amazonsns extends CRM_SMS_Provider {
     }
 
     if (!empty($jobID)) {
-      $mailingData = civicrm_api3('Mailing', 'getvalue', array(
-        'sequential' => 1,
-        'return' => 'template_options',
+      $mailingData = civicrm_api3('MailingJob', 'get', array(
         'id' => $jobID,
+        'api.Mailing.getvalue' => array(
+          'id' => '$value.mailing_id',
+          'return' => 'template_options',
+        ),
       ));
-      $messageParams['SMSType'] = $mailingData['sms_type'] ?: 'Promotional';
+      $messageParams['SMSType'] = $mailingData['values'][$jobID]['api.Mailing.getvalue']['sms_type'] ?: 'Promotional';
     } else {
       $messageParams['SMSType'] = CRM_Utils_Request::retrieve('sms_type', 'String') ?: 'Promotional';
     }

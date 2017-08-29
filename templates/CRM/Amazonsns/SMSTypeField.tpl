@@ -55,7 +55,7 @@
             msg += '<ul>';
 
             for (i = 0; i < result.values.length; i++) {
-              url = CRM.url('civicrm/contact/view', '{reset: 1, cid: ' + result.values[i].id + '}');
+              var url = CRM.url('civicrm/contact/view', {reset: 1, cid: result.values[i].id});
               msg += '<li><a href="' + url + '">' + result.values[i].display_name + ' - ' + result.values[i].phone + '</a></li>';
             }
 

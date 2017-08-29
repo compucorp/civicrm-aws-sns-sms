@@ -11,7 +11,7 @@ class CRM_Amazonsns_SMS_PhoneValidator {
    *
    * @var string
    */
-  private static $pattern = '^[+][1-9]{2,15}$';
+  private static $pattern = '^[+][1-9][0-9]{1,14}$';
 
   /**
    * Count the number of invalid phones associated to a mailing of SMS messages.

@@ -143,6 +143,26 @@ class uk_co_compucorp_amazonsns extends CRM_SMS_Provider {
       );
     }
 
+    $messageParams = $this->buildMessageParameters($jobID);
+    $messageParams['Message'] = $message;
+    $messageParams['PhoneNumber'] = $recipients;
+
+    try {
+      $result = $this->snsClient->publish($messageParams);
+      $messageID = $result->get('MessageId');
+      $this->createActivity($messageID, $message, $header, $jobID, $userID);
+    } catch(Aws\Sns\Exception\SnsException $e) {
+      return PEAR::raiseError(
+        'Error Sending SMS through Amazon SNS [' . $e->getAwsErrorCode() . ']' . ':' . ' - ' . $e->getAwsErrorMessage(),
+        $e->getAwsErrorCode(),
+        PEAR_ERROR_RETURN
+      );
+    }
+
+    return $messageID;
+  }
+
+  private function buildMessageParameters($jobID) {
     $messageParams = array();
 
     if (!empty($this->senderID)) {
@@ -162,22 +182,18 @@ class uk_co_compucorp_amazonsns extends CRM_SMS_Provider {
       $messageParams['SMSType'] = CRM_Utils_Request::retrieve('sms_type', 'String') ?: 'Promotional';
     }
 
-    $messageParams['Message'] = $message;
-    $messageParams['PhoneNumber'] = $recipients;
+    $messageParams['MessageAttributes'] = array(
+      'AWS.SNS.SMS.SenderID' => array(
+        'DataType' => 'String',
+        'StringValue' => $this->senderID
+      ),
+      'AWS.SNS.SMS.SMSType' => array(
+        'DataType'    => 'String',
+        'StringValue' => $messageParams['SMSType']
+      )
+    );
 
-    try {
-      $result = $this->snsClient->publish($messageParams);
-      $messageID = $result->get('MessageId');
-      $this->createActivity($messageID, $message, $header, $jobID, $userID);
-    } catch(Aws\Sns\Exception\SnsException $e) {
-      return PEAR::raiseError(
-        'Error Sending SMS through Amazon SNS [' . $e->getAwsErrorCode() . ']' . ':' . ' - ' . $e->getAwsErrorMessage(),
-        $e->getAwsErrorCode(),
-        PEAR_ERROR_RETURN
-      );
-    }
-
-    return $messageID;
+    return $messageParams;
   }
 
   /**

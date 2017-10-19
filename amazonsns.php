@@ -2,8 +2,6 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once 'amazonsns.civix.php';
-require_once 'api/api.php';
-require_once 'sites/all/modules/civicrm/api/v3/utils.php';
 
 /**
  * Implements hook_civicrm_config().

@@ -4,27 +4,29 @@
     <td nowrap>SMS Type (Amazon SNS):</td>
     <td>{$form.sms_type.html}</td>
   </tr>
-  <tr id="amazonsns-phone-validation">
-    <td colspan="2">
-      <div id="amazonsns-validation-alert">
-        <p>Found {$invalidPhonesCount} invalid phone{if $invalidPhonesCount > 1}s{/if} on selected groups! Phone numbers to be used to send SMS messages through Amazon SNS require to follow the E.164 format!</p>
-        <p><a href="http://docs.aws.amazon.com/sns/latest/dg/sms_publish-to-phone.html" target="_blank">More information...</a></p>
-        <p>Invalid phones:</p>
-        <ul>
-          {foreach from=$invalidPhones item="phoneData"}
-            <li>
-              <a href="{crmURL p="civicrm/contact/view" q="reset=1&cid=`$phoneData.contact_id`"}">
-                {$phoneData.contact_name} - {$phoneData.phone}
-              </a>
-            </li>
-          {/foreach}
-          {if $invalidPhonesCount > 20}
-            <li>...</li>
-          {/if}
-        </ul>
-      </div>
-    </td>
-  </tr>
+  {if $invalidPhonesCount > 0}
+    <tr id="amazonsns-phone-validation">
+      <td colspan="2">
+        <div id="amazonsns-validation-alert">
+          <p>Found {$invalidPhonesCount} invalid phone{if $invalidPhonesCount > 1}s{/if} on selected groups! Phone numbers to be used to send SMS messages through Amazon SNS require to follow the E.164 format!</p>
+          <p><a href="http://docs.aws.amazon.com/sns/latest/dg/sms_publish-to-phone.html" target="_blank">More information...</a></p>
+          <p>Invalid phones:</p>
+          <ul>
+            {foreach from=$invalidPhones item="phoneData"}
+              <li>
+                <a href="{crmURL p="civicrm/contact/view" q="reset=1&cid=`$phoneData.contact_id`"}">
+                  {$phoneData.contact_name} - {$phoneData.phone}
+                </a>
+              </li>
+            {/foreach}
+            {if $invalidPhonesCount > 20}
+              <li>...</li>
+            {/if}
+          </ul>
+        </div>
+      </td>
+    </tr>
+  {/if}
 </table>
 <script type="text/javascript">
   {literal}

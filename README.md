@@ -7,22 +7,19 @@ This extension enables users of CiviCRM to:
 - Categorize SMS type (‘promotional’ or ‘transactional’) with a field only visible for AWS SMS processor type.
 
 Installation
------- 
-In order to send SMS messages using Amazon SNS, the AWS-SDK for PHP needs to be installed. This dependency is handled with composer, 
-which needs to be run in order to install all required libraries.
-- Download / clone repository files and unpack them into CiviCRM's extension directory.
-- Run ´composer install´ from the extension's directory, to install all required libraries.
+------
+- Download a release from https://github.com/compucorp/civicrm-aws-sns-sms/releases/ and unpack them into CiviCRM's extension directory.
 - Go to Administer -> System Settings -> Extensions
 - Install Amazon SNS SMS Provider (uk.co.compucorp.amazonsns) extension, that should appear on the extension list, by clicking on the 'Install' link.
 
 Configuration
 ------
-In order to be able to use this extension, an account in AWS needs to be set up (https://aws.amazon.com/). Once you have an account, use 
-the AWS Console (https://console.aws.amazon.com) to create a user on the IAM component with sufficient permissions to send SMS messages (ie. Publish 
-permission for Amazon SNS). When you create the user, you will need to take note of the user's credentials, composed by two keys: 
+In order to be able to use this extension, an account in AWS needs to be set up (https://aws.amazon.com/). Once you have an account, use
+the AWS Console (https://console.aws.amazon.com) to create a user on the IAM component with sufficient permissions to send SMS messages (ie. Publish
+permission for Amazon SNS). When you create the user, you will need to take note of the user's credentials, composed by two keys:
 'Access key ID', which is public, and 'Secret Access Key', which is private.
 
-After installing, the new 'Amazon SNS' provider type is available to configure SMS providers. To configure a new provider, follow this 
+After installing, the new 'Amazon SNS' provider type is available to configure SMS providers. To configure a new provider, follow this
 procedure:
 - Go to Administer -> System Settings -> SMS Providers
 - Click on Add SMS Provider
@@ -46,12 +43,12 @@ SenderID=TestSender
 
 Usage
 ------
-Now that the extension is installed and you've configured a new SMS Provider, you can start sending SMS messages with it. Choosing a 
-provider for Amason SNS will require the input for an additional field, SMS Type, which can be 'Promotional' or 'Transactional'. 
-Basically, Amazon SNS will treat the SMS message differently, adding some additional security and verification of delivery for messages 
+Now that the extension is installed and you've configured a new SMS Provider, you can start sending SMS messages with it. Choosing a
+provider for Amason SNS will require the input for an additional field, SMS Type, which can be 'Promotional' or 'Transactional'.
+Basically, Amazon SNS will treat the SMS message differently, adding some additional security and verification of delivery for messages
 marked as 'Transactionsl'.
 
-Other than that, phone numbers are validated to meet the E.164 standard, but enforcing the use of a '+' sign at the start of the number (in E.164, the + 
+Other than that, phone numbers are validated to meet the E.164 standard, but enforcing the use of a '+' sign at the start of the number (in E.164, the +
 sign is optional). E.164 phone numbers can have between 2 and 15 digits. Basically, phone numbers will have to follow this format:
 
 ```

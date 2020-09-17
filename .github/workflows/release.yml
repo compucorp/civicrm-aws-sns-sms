@@ -28,7 +28,7 @@ jobs:
       - name: Build tarball
         shell: bash
         run: |
-          rm -r ${{ env.WORKING_DIR }}/{.git,.github}
+          rm -r ${{ env.WORKING_DIR }}/{.git,.github,.gitignore}
           tar czf ${{ env.WORKING_DIR }}.tar.gz ${{ env.WORKING_DIR }}
 
       - name: Upload Release Asset

@@ -17,8 +17,9 @@
   <compatibility>
     <ver>5.x</ver>
   </compatibility>
-  <comments></comments>
+  <comments/>
   <civix>
     <namespace>CRM/Amazonsns</namespace>
+    <format>22.05.2</format>
   </civix>
 </extension>

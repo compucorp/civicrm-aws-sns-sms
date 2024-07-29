@@ -3,7 +3,7 @@
 /**
  * Collection of upgrade steps.
  */
-class CRM_Amazonsns_Upgrader extends CRM_Amazonsns_Upgrader_Base {
+class CRM_Amazonsns_Upgrader extends CRM_Extension_Upgrader_Base {
 
   public function install() {
     civicrm_api3( 'OptionValue','create', array(

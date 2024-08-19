@@ -1,0 +1,40 @@
+name: Create build Branch
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  build:
+    if: github.event.pull_request.merged == true
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Delete build branch
+        uses: dawidd6/action-delete-branch@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branches: ${{ github.event.pull_request.base.ref  }}-build
+          soft_fail: true
+
+      - name: Create build branch
+        uses: peterjgrainger/action-create-branch@v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          branch: ${{ github.event.pull_request.base.ref  }}-build
+
+      - name: Install Compucorp-Civicrm-Aws-Sns-Sms dependencies
+        run: composer install
+
+      - name: Commit and push changes
+        uses: EndBug/add-and-commit@v7
+        with:
+          branch: ${{ github.event.pull_request.base.ref  }}-build
+          message: 'Add composer vendor'
+          add: './vendor -f'
+          push: true

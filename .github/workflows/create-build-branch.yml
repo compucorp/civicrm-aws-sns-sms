@@ -31,10 +31,13 @@ jobs:
       - name: Install Compucorp-Civicrm-Aws-Sns-Sms dependencies
         run: composer install
 
+      - name: Remove gitignore file
+        run: rm -rf .gitignore
+
       - name: Commit and push changes
         uses: EndBug/add-and-commit@v7
         with:
           branch: ${{ github.event.pull_request.base.ref  }}-build
-          message: 'Add composer vendor'
-          add: './vendor -f'
+          message: 'Add vendor folder and remove gitignore'
+          add: '["./vendor -f", "./.gitignore"]'
           push: true

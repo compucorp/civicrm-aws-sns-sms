@@ -28,6 +28,11 @@ jobs:
         with:
           branch: ${{ github.event.pull_request.base.ref  }}-build
 
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
       - name: Install Compucorp-Civicrm-Aws-Sns-Sms dependencies
         run: composer install
 

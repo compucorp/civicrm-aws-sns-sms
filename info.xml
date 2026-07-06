@@ -12,7 +12,7 @@
     <url desc="Documentation">https://github.com/compucorp/civicrm-aws-sns-sms/blob/master/README.md</url>
   </urls>
   <releaseDate>2026-06-01</releaseDate>
-  <version>7.0.0</version>
+  <version>7.1.0</version>
   <develStage>stable</develStage>
   <compatibility>
     <ver>5.38</ver>

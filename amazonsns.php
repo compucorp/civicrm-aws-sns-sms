@@ -1,6 +1,19 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
+// The bundled autoloader prepends itself, so its Guzzle and PSR-7 would
+// replace the site's own. Where the site already provides Guzzle 7, move it
+// to the end: the site's versions win, and the AWS SDK, which the site does
+// not provide, still loads from here. Checked before registering, so the
+// check cannot load Guzzle from this copy.
+(function () {
+  $siteHasGuzzle7 = interface_exists(\GuzzleHttp\ClientInterface::class)
+    && version_compare((string) \GuzzleHttp\ClientInterface::MAJOR_VERSION, '7', '>=');
+  $loader = require_once __DIR__ . '/vendor/autoload.php';
+  if ($siteHasGuzzle7 && $loader instanceof \Composer\Autoload\ClassLoader) {
+    $loader->unregister();
+    $loader->register(FALSE);
+  }
+})();
 require_once 'amazonsns.civix.php';
 
 /**
